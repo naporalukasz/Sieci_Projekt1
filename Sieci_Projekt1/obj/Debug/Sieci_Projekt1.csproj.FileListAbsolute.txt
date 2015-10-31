@@ -1,0 +1,7 @@
+D:\vs12_projekty\Sieci_Projekt1\Sieci_Projekt1\bin\Debug\Sieci_Projekt1.exe.config
+D:\vs12_projekty\Sieci_Projekt1\Sieci_Projekt1\bin\Debug\Sieci_Projekt1.exe
+D:\vs12_projekty\Sieci_Projekt1\Sieci_Projekt1\bin\Debug\Sieci_Projekt1.pdb
+D:\vs12_projekty\Sieci_Projekt1\Sieci_Projekt1\bin\Debug\encog-core-cs.dll
+D:\vs12_projekty\Sieci_Projekt1\Sieci_Projekt1\obj\Debug\Sieci_Projekt1.exe
+D:\vs12_projekty\Sieci_Projekt1\Sieci_Projekt1\obj\Debug\Sieci_Projekt1.pdb
+D:\vs12_projekty\Sieci_Projekt1\Sieci_Projekt1\obj\Debug\Sieci_Projekt1.csprojResolveAssemblyReference.cache
