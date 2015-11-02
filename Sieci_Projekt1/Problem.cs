@@ -48,6 +48,9 @@ namespace Sieci_Projekt1
         public double[] factor { get; set; }
         public double ansMeans { get; set; }
         public double ansfactor { get; set; }
+        public double[] Max { get; set; }
+        public double[] Min { get; set; }
+        public double ansMIn { get; set; }
 
         public Problem (Parameters Parameteras)
         {
@@ -209,8 +212,11 @@ namespace Sieci_Projekt1
 
             Normalization(valuesX);
             Normalization(valuesY);
+            //if(parameters.FunctionType==FunctionTypeEnum.Bipolar)
+                    ansMeans = means[0];
             ansfactor = factor[0];
-            ansMeans = means[0];
+       
+            //ansMIn = Min[0];
             var trainSetCount = (int)((double)valuesX.Count * ((100.0 - 15) / 100));
 
             valuesX.Shuffle();
@@ -265,8 +271,8 @@ namespace Sieci_Projekt1
 
         private string GetErrorText(double[] line)
         {
-            return line[0].ToString(CultureInfo.InvariantCulture) +
-                    line[1].ToString(CultureInfo.InvariantCulture) +
+            return line[0].ToString(CultureInfo.InvariantCulture) + ',' +
+                    line[1].ToString(CultureInfo.InvariantCulture) + ',' +
                     line[2].ToString(CultureInfo.InvariantCulture);
         }
 
@@ -313,8 +319,7 @@ namespace Sieci_Projekt1
 
         private void Normalization(List<double[]> values)
         {
-            double[] Max;
-            double[] Min;
+           
 
             if (parameters.ProblemType == ProblemTypeEnum.Classification)
             {
@@ -326,40 +331,72 @@ namespace Sieci_Projekt1
                 Max = new double[] { values.Max(v => v[0])};
                 Min = new double[] { values.Min(v => v[0]) };
             }
+            //if (parameters.FunctionType == FunctionTypeEnum.Bipolar)
+            //{
 
-            var columnCount = values[0].Length;
-             means = new double[columnCount];
 
-            foreach (var value in values)
+                var columnCount = values[0].Length;
+                means = new double[columnCount];
+
+                foreach (var value in values)
+                    for (int i = 0; i < columnCount; ++i)
+                        means[i] += value[i];
+
                 for (int i = 0; i < columnCount; ++i)
-                    means[i] += value[i];
+                    means[i] = means[i] / values.Count;
 
-            for (int i = 0; i < columnCount; ++i)
-                means[i] = means[i] / values.Count;
+                factor = new double[columnCount];
+                for (int i = 0; i < columnCount; i++)
+                    if (Math.Abs(Max[i] - means[i]) > Math.Abs(Min[i] - means[i]))
+                        factor[i] = Math.Abs(Max[i] - means[i]);
+                    else
+                        factor[i] = Math.Abs(Min[i] - means[i]);
 
-             factor= new double[columnCount];
-            for (int i = 0; i < columnCount;i++ )
-                if (Math.Abs(Max[i] - means[i]) > Math.Abs(Min[i] - means[i]))
-                    factor[i] = Math.Abs(Max[i] - means[i]);
-                else
-                    factor[i] = Math.Abs(Min[i] - means[i]);
+                foreach (var value in values)
+                    for (int i = 0; i < columnCount; ++i)
+                        value[i] = (value[i] - means[i]) / factor[i];
+            //}
+            //else
+            //{
 
-            foreach (var value in values)
-                for (int i = 0; i < columnCount; ++i)
-                    value[i] = (value[i] - means[i])/factor[i];
+            //    var columnCount = values[0].Length;
+            //    factor = new double[columnCount];
+            //    for (int i = 0; i < columnCount; i++)
+            //            factor[i] = Math.Abs(Max[i] - Min[i]);
+
+            //    foreach (var value in values)
+            //        for (int i = 0; i < columnCount; ++i)
+            //            value[i] = (value[i] - Min[i]) / factor[i];
+                   
+            //}
         
         } 
   
         private void DenormalizationRegg(List<double[]> values, bool answer)
         {
-            foreach (var value in values)
-                for (int i = 0; i < values[0].Length; ++i)
-                {
-                    if(answer)
-                        value[i] = value[i] * ansfactor + ansMeans;
-                    else
-                      value[i] = value[i] * factor[0] + means[0];
-                }
+            //if (parameters.FunctionType == FunctionTypeEnum.Bipolar)
+            //{
+                foreach (var value in values)
+                    for (int i = 0; i < values[0].Length; ++i)
+                    {
+                        if (answer)
+                            value[i] = value[i] * ansfactor + ansMeans;
+                        else
+                            value[i] = value[i] * factor[0] + means[0];
+                    }
+            //}
+            //else
+            //{
+            //    foreach (var value in values)
+            //        for (int i = 0; i < values[0].Length; ++i)
+            //        {
+            //            if (answer)
+            //                value[i] = value[i] * ansfactor + ansMIn;
+            //            else
+            //                value[i] = value[i] * factor[0] + Min[0];
+            //        }
+            //}
+
         }
     }
 
