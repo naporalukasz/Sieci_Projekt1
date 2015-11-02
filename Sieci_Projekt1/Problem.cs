@@ -43,9 +43,11 @@ namespace Sieci_Projekt1
         public BasicNeuralDataSet AnswerSet { get; set; }
         public List<double[]> errorSet { get; set; }
         public BasicNetwork network { get; set; }
-        public BasicNeuralDataSet DataForPlot { get; set; }
         public int classCount { get; set; }
-
+        public double[] means { get; set; }
+        public double[] factor { get; set; }
+        public double ansMeans { get; set; }
+        public double ansfactor { get; set; }
 
         public Problem (Parameters Parameteras)
         {
@@ -119,7 +121,7 @@ namespace Sieci_Projekt1
         {
             var values = new List<double[]>();
             var answers = new List<double[]>();
-            var outputSize = parameters.ProblemType == ProblemTypeEnum.Classification ? 3 : 1;
+            var outputSize = parameters.ProblemType == ProblemTypeEnum.Classification ? classCount : parameters.CountOutput;
             foreach (var input in testSet)
             {
                 var output = new double[outputSize];
@@ -129,6 +131,11 @@ namespace Sieci_Projekt1
                 answers.Add(output);
             }
 
+            if (parameters.ProblemType == ProblemTypeEnum.Regression)
+            {
+                DenormalizationRegg(values,false);
+                DenormalizationRegg(answers,true);
+            }
            AnswerSet = new BasicNeuralDataSet(values.ToArray(), answers.ToArray());
         }
 
@@ -202,6 +209,8 @@ namespace Sieci_Projekt1
 
             Normalization(valuesX);
             Normalization(valuesY);
+            ansfactor = factor[0];
+            ansMeans = means[0];
             var trainSetCount = (int)((double)valuesX.Count * ((100.0 - 15) / 100));
 
             valuesX.Shuffle();
@@ -310,7 +319,7 @@ namespace Sieci_Projekt1
             if (parameters.ProblemType == ProblemTypeEnum.Classification)
             {
                 Max = new double[] { values.Max(v => v[0]), values.Max(v => v[1]) };
-                Min = new double[] { values.Min(v => v[0]), values.Min(v => v[0]) };
+                Min = new double[] { values.Min(v => v[0]), values.Min(v => v[1]) };
             }
             else
             {
@@ -319,7 +328,7 @@ namespace Sieci_Projekt1
             }
 
             var columnCount = values[0].Length;
-            var means = new double[columnCount];
+             means = new double[columnCount];
 
             foreach (var value in values)
                 for (int i = 0; i < columnCount; ++i)
@@ -328,7 +337,7 @@ namespace Sieci_Projekt1
             for (int i = 0; i < columnCount; ++i)
                 means[i] = means[i] / values.Count;
 
-            var factor= new double[columnCount];
+             factor= new double[columnCount];
             for (int i = 0; i < columnCount;i++ )
                 if (Math.Abs(Max[i] - means[i]) > Math.Abs(Min[i] - means[i]))
                     factor[i] = Math.Abs(Max[i] - means[i]);
@@ -341,6 +350,17 @@ namespace Sieci_Projekt1
         
         } 
   
+        private void DenormalizationRegg(List<double[]> values, bool answer)
+        {
+            foreach (var value in values)
+                for (int i = 0; i < values[0].Length; ++i)
+                {
+                    if(answer)
+                        value[i] = value[i] * ansfactor + ansMeans;
+                    else
+                      value[i] = value[i] * factor[0] + means[0];
+                }
+        }
     }
 
     public static class MyExtensions
