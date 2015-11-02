@@ -10,6 +10,10 @@ namespace Sieci_Projekt1
     {
         public List<int> Layers { get; set; }
 
+        public int CountInput { get; set; }
+
+        public int CountOutput { get; set; }
+
         public FunctionTypeEnum FunctionType { get; set; }
 
         public bool Bias { get; set; }

@@ -44,7 +44,7 @@ namespace Sieci_Projekt1
         public List<double[]> errorSet { get; set; }
         public BasicNetwork network { get; set; }
         public BasicNeuralDataSet DataForPlot { get; set; }
-
+        public int classCount { get; set; }
 
 
         public Problem (Parameters Parameteras)
@@ -78,9 +78,7 @@ namespace Sieci_Projekt1
         public void CerateNetwork()
         {
             network = new BasicNetwork();
-            var countInput = parameters.ProblemType == ProblemTypeEnum.Classification ? 2 : 1;
-            var countOutput = parameters.ProblemType == ProblemTypeEnum.Classification ? 3 : 1;
-            network.AddLayer(new BasicLayer(countInput));
+            network.AddLayer(new BasicLayer(parameters.CountInput));
             foreach( var NueronNumber in parameters.Layers)
             {
                 switch (parameters.FunctionType)
@@ -94,9 +92,9 @@ namespace Sieci_Projekt1
                 }
             }
             if(parameters.ProblemType==ProblemTypeEnum.Classification)
-                network.AddLayer(new BasicLayer(new ActivationSoftMax(),parameters.Bias,countOutput));
+                network.AddLayer(new BasicLayer(new ActivationSoftMax(), parameters.Bias, classCount));
             else
-                network.AddLayer(new BasicLayer(countOutput));
+                network.AddLayer(new BasicLayer(parameters.CountOutput));
             network.Structure.FinalizeStructure();
             network.Reset();
 
@@ -150,7 +148,7 @@ namespace Sieci_Projekt1
 
             Normalization(values);
 
-            var classCount = classes.Select(c => c[0]).Distinct().Count();
+             classCount = classes.Select(c => c[0]).Distinct().Count();
             var normalizeClasses = new List<double[]>();
 
             for (int i = 0; i < classes.Count; ++i)
@@ -281,7 +279,7 @@ namespace Sieci_Projekt1
             int classValue = 0;
             double classFit = result.Ideal[0];
 
-            for (int i = 1; i < 3; ++i)
+            for (int i = 1; i < classCount; ++i)
                 if (classFit <= result.Ideal[i])
                 {
                     classFit = result.Ideal[i];

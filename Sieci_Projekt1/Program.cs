@@ -14,11 +14,13 @@ namespace Sieci_Projekt1
             var parameters = new Parameters
             {
                 Layers = new List<int> { 5,5 },
+                CountInput = 1,
+                CountOutput = 1,
                 FunctionType = FunctionTypeEnum.Unipolar,
                 Bias = true,
                 IterationsCount = 5000,
                 LearingCoefficient = 0.2,
-                InertiaCoefficient = 0.2,
+                InertiaCoefficient = 0.9,
                 ProblemType = ProblemTypeEnum.Regression
             };
 
