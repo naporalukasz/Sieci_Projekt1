@@ -108,7 +108,7 @@ namespace Sieci_Projekt1
 
         public void TrainNetwork()
         {
-           var  train = new Backpropagation(network, TrainSet);//, parameters.LearingCoefficient, parameters.InertiaCoefficient);
+           var  train = new Backpropagation(network, TrainSet, parameters.LearingCoefficient, parameters.InertiaCoefficient);
            errorSet = new List<double[]>();// iteracja, bład, błąd walidacji
            int epoch = 1;
            do
