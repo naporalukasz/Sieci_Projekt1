@@ -28,6 +28,10 @@ namespace Sieci_Projekt1
 
         public double AcceptedError { get; set; }
 
+        public string TrainFile { get; set; }
+
+        public string TestFile { get; set; }
+
         public void Construct(
             List<int> layers,
             FunctionTypeEnum function,
@@ -47,5 +51,6 @@ namespace Sieci_Projekt1
             ProblemType = problem;
             AcceptedError = error;
         }
+
     }
 }

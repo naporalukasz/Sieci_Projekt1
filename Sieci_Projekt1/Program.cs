@@ -18,6 +18,7 @@ namespace Sieci_Projekt1
             ProblemTypeEnum problemType;
             bool bias;
             double learningCoefficient, inertiaCoefficient;
+            string trainFile, testFile;
 
             #region Handle configuration
 
@@ -55,10 +56,16 @@ namespace Sieci_Projekt1
             else { HandleError("Bias"); return; }
 
             var learningCoefficientString = ConfigurationManager.AppSettings["LearningCoefficient"];
-            if (!double.TryParse(learningCoefficientString,NumberStyles.AllowDecimalPoint,new CultureInfo("en-US"), out learningCoefficient) || learningCoefficient <= 0 || learningCoefficient >= 1) { HandleError("LearningCoefficient"); return; }
+            if (!double.TryParse(learningCoefficientString,NumberStyles.AllowDecimalPoint,new CultureInfo("en-US"), out learningCoefficient) || learningCoefficient < 0 || learningCoefficient > 1) { HandleError("LearningCoefficient"); return; }
 
             var inertiaCoefficientString = ConfigurationManager.AppSettings["InertiaCoefficient"];
-            if (!double.TryParse(inertiaCoefficientString, NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"), out inertiaCoefficient) || inertiaCoefficient <= 0 || inertiaCoefficient >= 1) { HandleError("InertiaCoefficient"); return; }
+            if (!double.TryParse(inertiaCoefficientString, NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"), out inertiaCoefficient) || inertiaCoefficient < 0 || inertiaCoefficient > 1) { HandleError("InertiaCoefficient"); return; }
+
+            trainFile = ConfigurationManager.AppSettings["TrainingFile"];
+            if (string.IsNullOrEmpty(trainFile)) { HandleError("TrainingFile"); return; }
+
+            testFile = ConfigurationManager.AppSettings["TestingFile"];
+            if (string.IsNullOrEmpty(testFile)) { HandleError("TestingFile"); return; }
             #endregion
 
             var parameters = new Parameters
@@ -71,7 +78,9 @@ namespace Sieci_Projekt1
                 IterationsCount = iterationsCount,
                 LearingCoefficient = learningCoefficient,
                 InertiaCoefficient = inertiaCoefficient,
-                ProblemType = problemType
+                ProblemType = problemType,
+                TrainFile=trainFile,
+                TestFile=testFile               
             };
 
             var problem = new Problem(parameters);
